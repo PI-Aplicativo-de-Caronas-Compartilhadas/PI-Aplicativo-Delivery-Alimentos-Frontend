@@ -9,15 +9,15 @@ function CardCategoria({ categoria }: CardCategoriaProps) {
   return (
     <>
       <div>
-        <header>Tema</header>
+        <header>Categorias</header>
         <p>{categoria.nome}</p>
 
         <div>
-          <Link to="">
+          <Link to={`/editarcategoria/${categoria.id}`}>
             <button>Editar</button>
           </Link>
 
-          <Link to="">
+          <Link to={`/deletarcategoria/${categoria.id}`}>
             <button>Deletar</button>
           </Link>
         </div>
