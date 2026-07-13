@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type Categoria from "../../../models/Categoria";
 import { buscar, deletar } from "../../../services/Service";
+import { ToastAlerta } from "../../../utils/ToastAlera";
 
 function DeletarCategoria() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function DeletarCategoria() {
     try {
       await buscar(`/categoria/${id}`, setCategoria);
     } catch (error: any) {
-      alert("Erro ao buscar categoria");
+      ToastAlerta("Erro ao buscar categoria", "erro");
     }
   }
 
@@ -30,9 +31,9 @@ function DeletarCategoria() {
 
     try {
       await deletar(`/categoria/${id}`);
-      alert("Categoria deletada com sucesso");
+      ToastAlerta("Categoria deletada com sucesso", "sucesso");
     } catch (error: any) {
-      alert("Erro ao deletar a categoria.");
+      ToastAlerta("Erro ao deletar a categoria.", "erro");
     }
 
     setIsLoading(false);

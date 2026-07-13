@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type Categoria from "../../../models/Categoria";
 import { buscar } from "../../../services/Service";
 import { CircleNotch, PlusCircle } from "@phosphor-icons/react";
+import { ToastAlerta } from "../../../utils/ToastAlera";
 
 function ListaCategorias() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ function ListaCategorias() {
       setIsLoading(true);
       await buscar("/categoria", setCategoria);
     } catch (error: any) {
-      alert("Erro ao buscar");
+      ToastAlerta("Erro ao buscar categorias", "erro");
     } finally {
       setIsLoading(false);
     }
