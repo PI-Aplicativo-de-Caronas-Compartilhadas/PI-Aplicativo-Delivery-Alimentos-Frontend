@@ -45,37 +45,6 @@ src/
 
 ---
 
-## 🚀 Como Executar o Projeto
-
-### Pré-requisitos
-Certifique-se de ter o [Node.js](https://nodejs.org) instalado em sua máquina.
-
-### Passo a Passo
-
-1. **Clonar o repositório:**
-   ```bash
-   git clone <link-do-seu-repositorio>
-   ```
-
-2. **Acessar a pasta raiz do projeto:**
-   ```bash
-   cd PI-APLICATIVO-DELIVERY-ALIMENTOS-FRONT
-   ```
-
-3. **Instalar as dependências necessárias:**
-   ```bash
-   npm install
-   ```
-
-4. **Iniciar o servidor de desenvolvimento local:**
-   ```bash
-   npm run dev
-   ```
-
-5. Acesse o endereço gerado no terminal (geralmente `http://localhost:5173`) para visualizar o app.
-
----
-
 ## 👥 Desenvolvedores
 
 Projeto desenvolvido em equipe pelos integrantes (em ordem alfabética):
