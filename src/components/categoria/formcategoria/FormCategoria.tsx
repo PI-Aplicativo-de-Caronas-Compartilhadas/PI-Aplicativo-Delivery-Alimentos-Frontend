@@ -6,7 +6,6 @@ import { atualizar, buscar, cadastrar } from "../../../services/Service";
 function FormCategoria() {
   const navigate = useNavigate();
 
-  
   const [categoria, setCategoria] = useState<Categoria>({} as Categoria);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -14,7 +13,7 @@ function FormCategoria() {
 
   async function buscarPorId(id: string) {
     try {
-      await buscar(`/categorias/${id}`, setCategoria);
+      await buscar(`/categoria/${id}`, setCategoria);
     } catch (error: any) {
       alert("Erro ao buscar categoria por id");
     }
@@ -34,7 +33,7 @@ function FormCategoria() {
   }
 
   function retornar() {
-    navigate("/categorias");
+    navigate("/categoria");
   }
 
   async function gerarNovaCategoria(e: FormEvent<HTMLFormElement>) {
@@ -43,14 +42,14 @@ function FormCategoria() {
 
     if (id !== undefined) {
       try {
-        await atualizar(`/categorias`, categoria, setCategoria);
+        await atualizar(`/categoria`, categoria, setCategoria);
         alert("A Categoria foi atualizada com sucesso!");
       } catch (error: any) {
         alert("Erro ao atualizar a categoria");
       }
     } else {
       try {
-        await cadastrar(`/categorias`, categoria, setCategoria);
+        await cadastrar(`/categoria`, categoria, setCategoria);
         alert("A Categoria foi cadastrada com sucesso!");
       } catch (error: any) {
         alert("Erro ao cadastrar a categoria.");
@@ -64,7 +63,6 @@ function FormCategoria() {
   return (
     <div className="w-full bg-white min-h-[calc(100vh-8rem)] text-[#042f17] py-12 px-8 flex flex-col items-center justify-center">
       <div className="container max-w-lg flex flex-col gap-6 bg-white p-8 rounded-2xl border border-[#bbf7d0] shadow-xl">
-        
         <div className="flex flex-col gap-1 text-center md:text-left">
           <h1 className="text-3xl font-black text-[#042f17]">
             {id === undefined ? "Cadastrar Categoria" : "Editar Categoria"}
@@ -74,9 +72,15 @@ function FormCategoria() {
           </p>
         </div>
 
-        <form onSubmit={gerarNovaCategoria} className="flex flex-col gap-5 mt-2">
+        <form
+          onSubmit={gerarNovaCategoria}
+          className="flex flex-col gap-5 mt-2"
+        >
           <div className="flex flex-col gap-2">
-            <label htmlFor="nome" className="text-xs font-extrabold text-[#0b8e44] tracking-wider uppercase">
+            <label
+              htmlFor="nome"
+              className="text-xs font-extrabold text-[#0b8e44] tracking-wider uppercase"
+            >
               Nome da Categoria
             </label>
             <input
@@ -84,7 +88,9 @@ function FormCategoria() {
               placeholder="Escreva sua categoria aqui"
               name="nome"
               value={categoria.nome || ""}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                atualizarEstado(e)
+              }
               className="w-full bg-[#f0fdf4] border border-[#bbf7d0] focus:border-[#0b8e44] focus:ring-1 focus:ring-[#0b8e44] text-[#042f17] placeholder-[#075f2d]/50 font-medium py-3 px-4 rounded-xl outline-none transition-all text-sm"
             />
           </div>
@@ -104,11 +110,16 @@ function FormCategoria() {
               disabled={isLoading}
               className="flex-1 bg-[#0b8e44] hover:bg-[#075f2d] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md text-sm flex items-center justify-center"
             >
-              <span>{isLoading ? "Salvando..." : id === undefined ? "Cadastrar" : "Atualizar"}</span>
+              <span>
+                {isLoading
+                  ? "Salvando..."
+                  : id === undefined
+                    ? "Cadastrar"
+                    : "Atualizar"}
+              </span>
             </button>
           </div>
         </form>
-
       </div>
     </div>
   );
