@@ -8,6 +8,9 @@ import FormCategoria from "./components/categoria/formcategoria/FormCategoria";
 import DeletarCategoria from "./components/categoria/deletarcategoria/DeletarCategoria";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import ListaProdutos from "./components/produto/listaprodutos/ListaProdutos";
+import FormProduto from "./components/produto/formproduto/FormProduto";
+import DeletarProduto from "./components/produto/deletarproduto/DeletarProduto";
 
 function App() {
   return (
@@ -18,25 +21,25 @@ function App() {
         <div className="flex flex-col min-h-screen bg-white text-[#042f17]">
           <Navbar />
 
-          <div className="flex-1">
-            <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/" element={<Home />} />
-              <Route path="/categoria" element={<ListaCategorias />} />
-              <Route
-                path="/produtos"
-                element={
-                  <h1 className="text-3xl font-bold p-8">Página de Produtos</h1>
-                }
-              />
-              <Route path="/cadastrarcategoria" element={<FormCategoria />} />
-              <Route path="/editarcategoria/:id" element={<FormCategoria />} />
-              <Route
-                path="/deletarcategoria/:id"
-                element={<DeletarCategoria />}
-              />
-            </Routes>
-          </div>
+        <div className="flex-1">
+          <Routes>
+            {/* Rotas Principais */}
+            <Route path="/home" element={<Home />} />
+            <Route path="/" element={<Home />} />
+            
+            {/* Rotas de Categoria */}
+            <Route path="/categoria" element={<ListaCategorias />} />
+            <Route path="/cadastrarcategoria" element={<FormCategoria />} />
+            <Route path="/editarcategoria/:id" element={<FormCategoria />} />
+            <Route path="/deletarcategoria/:id" element={<DeletarCategoria />} />
+
+            {/* Rotas de Produto adicionadas aqui */}
+            <Route path="/produto" element={<ListaProdutos />} />
+            <Route path="/cadastrarproduto" element={<FormProduto />} />
+            <Route path="/editarproduto/:id" element={<FormProduto />} />
+            <Route path="/deletarproduto/:id" element={<DeletarProduto />} />
+          </Routes>
+        </div>
 
           <Footer />
         </div>
