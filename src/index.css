@@ -1,15 +1,40 @@
+/* ===========================
+   Google Fonts
+=========================== */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+/* ===========================
+   Tailwind CSS
+=========================== */
 @import "tailwindcss";
 
+/* ===========================
+   Tema NutriGo
+=========================== */
 @theme {
---color-spring-green-50: #e7fdf1;
---color-spring-green-100: #d0fbe3;
---color-spring-green-200: #a0f8c6;
---color-spring-green-300: #71f4aa;
---color-spring-green-400: #41f18d;
---color-spring-green-500: #12ed71;
---color-spring-green-600: #0ebe5a;
---color-spring-green-700: #0b8e44;
---color-spring-green-800: #075f2d;
---color-spring-green-900: #042f17;
---color-spring-green-950: #022110;
+  --color-spring-green-50: #e7fdf1;
+  --color-spring-green-100: #d0fbe3;
+  --color-spring-green-200: #a0f8c6;
+  --color-spring-green-300: #71f4aa;
+  --color-spring-green-400: #41f18d;
+  --color-spring-green-500: #12ed71;
+  --color-spring-green-600: #0ebe5a;
+  --color-spring-green-700: #0b8e44;
+  --color-spring-green-800: #075f2d;
+  --color-spring-green-900: #042f17;
+  --color-spring-green-950: #022110;
+}
+
+/* ===========================
+   Estilos Globais
+=========================== */
+
+html {
+  font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: white;
+  color: var(--color-spring-green-900);
 }
