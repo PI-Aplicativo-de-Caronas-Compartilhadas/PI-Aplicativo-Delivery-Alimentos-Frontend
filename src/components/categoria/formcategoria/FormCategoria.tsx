@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import type Categoria from "../../../models/Categoria";
 import { atualizar, buscar, cadastrar } from "../../../services/Service";
 import { ToastAlerta } from "../../../utils/ToastAlera";
+import { ClipLoader } from "react-spinners";
 
 function FormCategoria() {
   const navigate = useNavigate();
@@ -111,13 +112,17 @@ function FormCategoria() {
               disabled={isLoading}
               className="flex-1 bg-[#0b8e44] hover:bg-[#075f2d] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md text-sm flex items-center justify-center"
             >
-              <span>
-                {isLoading
-                  ? "Salvando..."
-                  : id === undefined
-                    ? "Cadastrar"
-                    : "Atualizar"}
-              </span>
+              {isLoading ? (
+                <ClipLoader color="#ffffff" size={24} />
+              ) : (
+                <span>
+                  {isLoading
+                    ? "Salvando..."
+                    : id === undefined
+                      ? "Cadastrar"
+                      : "Atualizar"}
+                </span>
+              )}
             </button>
           </div>
         </form>

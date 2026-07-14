@@ -1,8 +1,10 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type Produto from "../../../models/Produto";
 import type Categoria from "../../../models/Categoria";
 import { buscar, cadastrar, atualizar } from "../../../services/Service";
+import { ToastAlerta } from "../../../utils/ToastAlera";
+import { ClipLoader, SyncLoader } from "react-spinners";
 
 function FormProduto() {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ function FormProduto() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  
+
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<Categoria>({
     id: 0,
     nome: "",
@@ -22,24 +24,25 @@ function FormProduto() {
     preco: 0,
     calorias: 0,
     descricao: "",
+    foto: "",
     categoria: null,
   });
 
-  // Busca todas as categorias para renderizar no select
+  // Busca todas as categorias para renderizar no select (corrigido para /categorias)
   async function buscarCategorias() {
     try {
       await buscar("/categoria", setCategorias);
     } catch (error: any) {
-      alert("Erro ao buscar as categorias.");
+      ToastAlerta("Erro ao buscar as categorias.", "erro");
     }
   }
 
-  // Busca o produto por ID caso seja uma edição
+  // Busca o produto por ID caso seja uma edição (corrigido para /produto ou /produtos conforme sua API)
   async function buscarProdutoPorId(id: string) {
     try {
       await buscar(`/produto/${id}`, setProduto);
     } catch (error: any) {
-      alert("Erro ao buscar o produto selecionado.");
+      ToastAlerta("Erro ao buscar o produto selecionado.", "erro");
     }
   }
 
@@ -58,34 +61,36 @@ function FormProduto() {
     });
   }, [categoriaSelecionada]);
 
-  function atualizarEstado(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function atualizarEstado(
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) {
     const { name, value } = e.target;
-    
+
     setProduto((prev) => ({
       ...prev,
       [name]: name === "preco" || name === "calorias" ? Number(value) : value,
     }));
   }
 
-  async function salvarProduto(e: ChangeEvent<HTMLFormElement>) {
+  async function salvarProduto(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
 
     if (id !== undefined) {
       try {
         await atualizar(`/produto`, produto, setProduto);
-        alert("Produto atualizado com sucesso!");
+        ToastAlerta("Produto atualizado com sucesso!", "sucesso");
         retornar();
       } catch (error: any) {
-        alert("Erro ao atualizar o Produto.");
+        ToastAlerta("Erro ao atualizar o Produto.", "erro");
       }
     } else {
       try {
         await cadastrar(`/produto`, produto, setProduto);
-        alert("Produto cadastrado com sucesso!");
+        ToastAlerta("Produto cadastrado com sucesso!", "sucesso");
         retornar();
       } catch (error: any) {
-        alert("Erro ao cadastrar o Produto.");
+        ToastAlerta("Erro ao cadastrar o Produto.", "erro");
       }
     }
 
@@ -93,7 +98,7 @@ function FormProduto() {
   }
 
   function retornar() {
-    navigate("/produtos");
+    navigate("/produto");
   }
 
   return (
@@ -107,7 +112,9 @@ function FormProduto() {
         </h1>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="nome" className="font-bold text-[#042f17] text-sm">Nome do Produto</label>
+          <label htmlFor="nome" className="font-bold text-[#042f17] text-sm">
+            Nome do Produto
+          </label>
           <input
             type="text"
             placeholder="Ex: Hambúrguer Artesanal, Suco Natural de Laranja"
@@ -119,9 +126,25 @@ function FormProduto() {
           />
         </div>
 
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="foto" className="font-bold text-[#042f17] text-sm">
+            Foto (Endereço URL)
+          </label>
+          <input
+            type="text"
+            placeholder="https://exemplo.com/imagem.jpg"
+            name="foto"
+            className="border border-[#bbf7d0] rounded-xl p-3 focus:outline-none focus:border-[#0b8e44] text-slate-800 bg-white"
+            value={produto.foto || ""}
+            onChange={atualizarEstado}
+          />
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="preco" className="font-bold text-[#042f17] text-sm">Preço (R$)</label>
+            <label htmlFor="preco" className="font-bold text-[#042f17] text-sm">
+              Preço (R$)
+            </label>
             <input
               type="number"
               step="0.01"
@@ -135,7 +158,12 @@ function FormProduto() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="calorias" className="font-bold text-[#042f17] text-sm">Calorias (kcal)</label>
+            <label
+              htmlFor="calorias"
+              className="font-bold text-[#042f17] text-sm"
+            >
+              Calorias (kcal)
+            </label>
             <input
               type="number"
               placeholder="Ex: 350"
@@ -149,7 +177,12 @@ function FormProduto() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="descricao" className="font-bold text-[#042f17] text-sm">Descrição</label>
+          <label
+            htmlFor="descricao"
+            className="font-bold text-[#042f17] text-sm"
+          >
+            Descrição
+          </label>
           <textarea
             placeholder="Descreva os ingredientes ou detalhes do produto..."
             name="descricao"
@@ -162,16 +195,28 @@ function FormProduto() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="categoria" className="font-bold text-[#042f17] text-sm">Categoria do Produto</label>
+          <label
+            htmlFor="categoria"
+            className="font-bold text-[#042f17] text-sm"
+          >
+            Categoria do Produto
+          </label>
           <select
             name="categoria"
             required
             className="border border-[#bbf7d0] rounded-xl p-3 focus:outline-none focus:border-[#0b8e44] text-slate-800 bg-white"
-            onChange={(e) => buscar(`/categoria/${e.target.value}`, setCategoriaSelected || setCategoriaSelecionada)}
+            onChange={(e) => {
+              const catId = Number(e.target.value);
+              const catEncontrada = categorias.find((c) => c.id === catId);
+              if (catEncontrada) {
+                setCategoriaSelecionada(catEncontrada);
+              }
+            }}
+            value={produto.categoria?.id || ""}
           >
             <option value="">Selecione uma Categoria</option>
             {categorias.map((cat) => (
-              <option key={cat.id} value={cat.id} selected={produto.categoria?.id === cat.id}>
+              <option key={cat.id} value={cat.id}>
                 {cat.nome}
               </option>
             ))}
@@ -184,9 +229,9 @@ function FormProduto() {
           className="w-full mt-2 bg-[#0b8e44] hover:bg-[#075f2d] disabled:bg-slate-300 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm flex justify-center items-center"
         >
           {isLoading ? (
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+            <ClipLoader color="#ffffff" size={24} />
           ) : (
-            id !== undefined ? "Atualizar" : "Cadastrar"
+            <span>{id !== undefined ? "Atualizar" : "Cadastrar"}</span>
           )}
         </button>
       </form>

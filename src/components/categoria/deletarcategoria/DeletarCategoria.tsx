@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import type Categoria from "../../../models/Categoria";
 import { buscar, deletar } from "../../../services/Service";
 import { ToastAlerta } from "../../../utils/ToastAlera";
+import { ClipLoader } from "react-spinners";
 
 function DeletarCategoria() {
   const navigate = useNavigate();
@@ -74,10 +75,13 @@ function DeletarCategoria() {
 
           <button
             onClick={deletarCategoria}
-            disabled={isLoading}
             className="flex-1 bg-[#ef4444] hover:bg-[#dc2626] text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-sm text-sm flex items-center justify-center"
           >
-            {isLoading ? "Deletando..." : "Sim"}
+            {isLoading ? (
+              <ClipLoader color="#ffffff" size={24} />
+            ) : (
+              <span>Sim</span>
+            )}
           </button>
         </div>
       </div>
