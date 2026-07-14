@@ -1,75 +1,57 @@
-# React + TypeScript + Vite
+# NutriGo 🥗
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **NutriGo** é um aplicativo de delivery focado em alimentos saudáveis. A plataforma conecta usuários a uma alimentação balanceada, permitindo a listagem, criação, edição e exclusão de produtos e categorias de alimentos de forma simples e intuitiva.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Tecnologias Utilizadas
 
-## React Compiler
+- **React** (com TypeScript e TSX)
+- **Vite** (Ferramenta de build rápida)
+- **Tailwind Css** (Estilização base e global)
+- **ESLint** (Padronização e qualidade de código)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📁 Estrutura do Projeto
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Abaixo está a arquitetura de pastas do projeto com base no diretório `src/`:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```text
+src/
+├── assets/             # Imagens, ícones e mídias estáticas
+├── components/         # Componentes visuais reutilizáveis
+│   ├── categoria/      # Módulos para gerenciamento de categorias (CRUD)
+│   │   ├── cardcategoria/
+│   │   ├── deletarcategoria/
+│   │   ├── formcategoria/
+│   │   ├── listacategorias/
+│   │   └── modalcategoria/
+│   ├── footer/         # Componente do rodapé da aplicação
+│   ├── navbar/         # Componente da barra de navegação
+│   └── produto/        # Módulos para gerenciamento de produtos alimentícios
+├── models/             # Interfaces de tipagem do TypeScript
+│   ├── Categoria.ts    # Modelo de dados da Categoria
+│   └── Produto.ts      # Modelo de dados do Produto
+├── pages/              # Telas e páginas estruturadas da aplicação
+│   └── home/           # Tela inicial (Home.tsx)
+├── services/           # Comunicação e requisições HTTP
+│   └── Service.ts      # Métodos de integração com a API
+├── App.css             # Estilos específicos do componente App
+├── App.tsx             # Componente raiz principal
+├── index.css           # Estilos globais da aplicação
+└── main.tsx            # Ponto de entrada do React
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 👥 Desenvolvedores
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Projeto desenvolvido em equipe pelos integrantes (em ordem alfabética):
 
-```
+- Fabriciana Lima
+- Fernando Garcia Cabeceiro
+- Igor Kenzo Yamamoto
+- Lilian Lacerda
+- Roberta Rodrigues
+- Vinicius Vicente

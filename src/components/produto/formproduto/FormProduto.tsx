@@ -1,8 +1,9 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type Produto from "../../../models/Produto";
 import type Categoria from "../../../models/Categoria";
 import { buscar, cadastrar, atualizar } from "../../../services/Service";
+import { ToastAlerta } from "../../../utils/ToastAlera";
 
 function FormProduto() {
   const navigate = useNavigate();
@@ -25,21 +26,30 @@ function FormProduto() {
     categoria: null,
   });
 
-  // Busca todas as categorias para renderizar no select
+  // Estado auxiliar para controlar o input de URL da imagem no front
+  const [urlFoto, setUrlFoto] = useState<string>("");
+
   async function buscarCategorias() {
     try {
       await buscar("/categoria", setCategorias);
     } catch (error: any) {
-      alert("Erro ao buscar as categorias.");
+      ToastAlerta("Erro ao buscar as categorias.", "erro");
     }
   }
 
-  // Busca o produto por ID caso seja uma edição
   async function buscarProdutoPorId(id: string) {
     try {
-      await buscar(`/produto/${id}`, setProduto);
+      const resposta = await buscar(`/produto/${id}`, (dados: Produto) => {
+        setProduto(dados);
+        // Se já houver imagem salva na descrição (separada por |), extrai para o input de foto
+        if (dados.descricao && dados.descricao.includes("|")) {
+          const partes = dados.descricao.split("|");
+          setProduto({ ...dados, descricao: partes[0].trim() });
+          setUrlFoto(partes[1]?.trim() || "");
+        }
+      });
     } catch (error: any) {
-      alert("Erro ao buscar o produto selecionado.");
+      ToastAlerta("Erro ao buscar o produto selecionado.", "erro");
     }
   }
 
@@ -50,7 +60,6 @@ function FormProduto() {
     }
   }, [id]);
 
-  // Sincroniza o estado do select de categorias
   useEffect(() => {
     setProduto({
       ...produto,
@@ -67,25 +76,31 @@ function FormProduto() {
     }));
   }
 
-  async function salvarProduto(e: ChangeEvent<HTMLFormElement>) {
+  async function salvarProduto(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
 
+    // Une a descrição com a URL da foto usando "|" para salvar no campo descricao do back-end
+    const produtoParaSalvar = {
+      ...produto,
+      descricao: urlFoto.trim() ? `${produto.descricao} | ${urlFoto.trim()}` : produto.descricao,
+    };
+
     if (id !== undefined) {
       try {
-        await atualizar(`/produto`, produto, setProduto);
-        alert("Produto atualizado com sucesso!");
+        await atualizar(`/produto`, produtoParaSalvar, setProduto);
+        ToastAlerta("Produto atualizado com sucesso!", "sucesso");
         retornar();
       } catch (error: any) {
-        alert("Erro ao atualizar o Produto.");
+        ToastAlerta("Erro ao atualizar o Produto.", "erro");
       }
     } else {
       try {
-        await cadastrar(`/produto`, produto, setProduto);
-        alert("Produto cadastrado com sucesso!");
+        await cadastrar(`/produto`, produtoParaSalvar, setProduto);
+        ToastAlerta("Produto cadastrado com sucesso!", "sucesso");
         retornar();
       } catch (error: any) {
-        alert("Erro ao cadastrar o Produto.");
+        ToastAlerta("Erro ao cadastrar o Produto.", "erro");
       }
     }
 
@@ -93,7 +108,7 @@ function FormProduto() {
   }
 
   function retornar() {
-    navigate("/produtos");
+    navigate("/produto");
   }
 
   return (
@@ -110,12 +125,23 @@ function FormProduto() {
           <label htmlFor="nome" className="font-bold text-[#042f17] text-sm">Nome do Produto</label>
           <input
             type="text"
-            placeholder="Ex: Hambúrguer Artesanal, Suco Natural de Laranja"
+            placeholder="Ex: Hambúrguer Artesanal, Suco Natural"
             name="nome"
             required
             className="border border-[#bbf7d0] rounded-xl p-3 focus:outline-none focus:border-[#0b8e44] text-slate-800 bg-white"
             value={produto.nome}
             onChange={atualizarEstado}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="foto" className="font-bold text-[#042f17] text-sm">Foto (Endereço URL do Google)</label>
+          <input
+            type="text"
+            placeholder="https://images.unsplash.com/... ou link de imagem"
+            value={urlFoto}
+            onChange={(e) => setUrlFoto(e.target.value)}
+            className="border border-[#bbf7d0] rounded-xl p-3 focus:outline-none focus:border-[#0b8e44] text-slate-800 bg-white"
           />
         </div>
 
@@ -151,7 +177,7 @@ function FormProduto() {
         <div className="flex flex-col gap-1.5">
           <label htmlFor="descricao" className="font-bold text-[#042f17] text-sm">Descrição</label>
           <textarea
-            placeholder="Descreva os ingredientes ou detalhes do produto..."
+            placeholder="Descreva os ingredientes..."
             name="descricao"
             required
             rows={3}
@@ -167,11 +193,18 @@ function FormProduto() {
             name="categoria"
             required
             className="border border-[#bbf7d0] rounded-xl p-3 focus:outline-none focus:border-[#0b8e44] text-slate-800 bg-white"
-            onChange={(e) => buscar(`/categoria/${e.target.value}`, setCategoriaSelected || setCategoriaSelecionada)}
+            onChange={(e) => {
+              const catId = Number(e.target.value);
+              const catEncontrada = categorias.find((c) => c.id === catId);
+              if (catEncontrada) {
+                setCategoriaSelecionada(catEncontrada);
+              }
+            }}
+            value={produto.categoria?.id || ""}
           >
             <option value="">Selecione uma Categoria</option>
             {categorias.map((cat) => (
-              <option key={cat.id} value={cat.id} selected={produto.categoria?.id === cat.id}>
+              <option key={cat.id} value={cat.id}>
                 {cat.nome}
               </option>
             ))}

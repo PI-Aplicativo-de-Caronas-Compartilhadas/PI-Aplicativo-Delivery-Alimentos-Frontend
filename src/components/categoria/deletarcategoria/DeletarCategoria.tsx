@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type Categoria from "../../../models/Categoria";
 import { buscar, deletar } from "../../../services/Service";
+import { ToastAlerta } from "../../../utils/ToastAlera";
 
 function DeletarCategoria() {
   const navigate = useNavigate();
@@ -13,9 +14,9 @@ function DeletarCategoria() {
 
   async function buscarPorId(id: string) {
     try {
-      await buscar(`/categorias/${id}`, setCategoria);
+      await buscar(`/categoria/${id}`, setCategoria);
     } catch (error: any) {
-      alert("Erro ao buscar categoria");
+      ToastAlerta("Erro ao buscar categoria", "erro");
     }
   }
 
@@ -29,10 +30,10 @@ function DeletarCategoria() {
     setIsLoading(true);
 
     try {
-      await deletar(`/categorias/${id}`);
-      alert("Categoria deletada com sucesso");
+      await deletar(`/categoria/${id}`);
+      ToastAlerta("Categoria deletada com sucesso", "sucesso");
     } catch (error: any) {
-      alert("Erro ao deletar a categoria.");
+      ToastAlerta("Erro ao deletar a categoria.", "erro");
     }
 
     setIsLoading(false);
@@ -40,15 +41,16 @@ function DeletarCategoria() {
   }
 
   function retornar() {
-    navigate("/categorias");
+    navigate("/categoria");
   }
 
   return (
     <div className="w-full bg-white min-h-[calc(100vh-8rem)] text-[#042f17] py-10 px-8 flex flex-col items-center">
       <div className="container max-w-xl flex flex-col gap-6 bg-white p-8 rounded-2xl border border-[#bbf7d0] shadow-xl">
-        
         <div className="flex flex-col gap-1 text-center md:text-left">
-          <h1 className="text-3xl font-black text-[#042f17]">Deletar Categoria</h1>
+          <h1 className="text-3xl font-black text-[#042f17]">
+            Deletar Categoria
+          </h1>
           <p className="text-sm md:text-base text-[#075f2d] font-medium">
             Você tem certeza de que deseja apagar a Categoria a seguir?
           </p>
@@ -62,23 +64,22 @@ function DeletarCategoria() {
         </div>
 
         <div className="flex items-center gap-4 mt-2">
-          <button 
-            onClick={retornar} 
+          <button
+            onClick={retornar}
             disabled={isLoading}
             className="flex-1 bg-gray-200 hover:bg-gray-300 text-[#042f17] font-bold py-3 px-6 rounded-xl transition-colors shadow-sm text-sm"
           >
             Não
           </button>
-          
-          <button 
-            onClick={deletarCategoria} 
+
+          <button
+            onClick={deletarCategoria}
             disabled={isLoading}
             className="flex-1 bg-[#ef4444] hover:bg-[#dc2626] text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-sm text-sm flex items-center justify-center"
           >
             {isLoading ? "Deletando..." : "Sim"}
           </button>
         </div>
-
       </div>
     </div>
   );

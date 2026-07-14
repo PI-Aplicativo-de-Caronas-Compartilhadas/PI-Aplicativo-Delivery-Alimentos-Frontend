@@ -6,16 +6,20 @@ import "./index.css";
 import ListaCategorias from "./components/categoria/listacategorias/ListaCategorias";
 import FormCategoria from "./components/categoria/formcategoria/FormCategoria";
 import DeletarCategoria from "./components/categoria/deletarcategoria/DeletarCategoria";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import ListaProdutos from "./components/produto/listaprodutos/ListaProdutos";
 import FormProduto from "./components/produto/formproduto/FormProduto";
 import DeletarProduto from "./components/produto/deletarproduto/DeletarProduto";
 
 function App() {
   return (
-    <BrowserRouter>
-      {/* Altere bg-[#022110] para bg-white aqui embaixo */}
-      <div className="flex flex-col min-h-screen bg-white text-[#042f17]">
-        <Navbar />
+    <>
+      <ToastContainer />
+      <BrowserRouter>
+        {/* Altere bg-[#022110] para bg-white aqui embaixo */}
+        <div className="flex flex-col min-h-screen bg-white text-[#042f17]">
+          <Navbar />
 
         <div className="flex-1">
           <Routes>
@@ -37,9 +41,10 @@ function App() {
           </Routes>
         </div>
 
-        <Footer />
-      </div>
-    </BrowserRouter>
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </>
   );
 }
 
