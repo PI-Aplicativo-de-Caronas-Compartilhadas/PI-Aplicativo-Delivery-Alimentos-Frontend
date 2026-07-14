@@ -15,16 +15,6 @@ import type Categoria from "../../models/Categoria";
 import { buscar } from "../../services/Service";
 import { ToastAlerta } from "../../utils/ToastAlera";
 
-// Importações de imagens locais das sugestões rápidas estáticas
-import smoothie from "../../assets/sugestoes/smothie.jpg";
-import wrap2 from "../../assets/sugestoes/wrap2.jpg";
-import frutas from "../../assets/sugestoes/frutas.jpg";
-import peixe from "../../assets/sugestoes/peixe.jpg";
-import poke from "../../assets/sugestoes/poke.jpg";
-import omelete from "../../assets/sugestoes/omelete.jpg";
-import sopa from "../../assets/sugestoes/sopa.jpg";
-import salada from "../../assets/sugestoes/salada.jpg";
-
 function Home() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
@@ -63,6 +53,7 @@ function Home() {
   const listaProdutos = Array.isArray(produtos) ? produtos : [];
   const listaCategorias = Array.isArray(categorias) ? categorias : [];
 
+  // Filtra os produtos com base na categoria selecionada
   const produtosFiltrados = categoriaSelecionada !== null
     ? listaProdutos.filter((item) => item.categoria?.id === categoriaSelecionada)
     : listaProdutos;
@@ -137,7 +128,7 @@ function Home() {
             {categoriaSelecionada !== null && (
               <button 
                 onClick={() => setCategoriaSelecionada(null)}
-                className="text-xs font-bold text-[#0b8e44] hover:underline"
+                className="text-xs font-bold text-[#0b8e44] bg-[#dcfce7] border border-[#0b8e44] py-1.5 px-3.5 rounded-lg hover:bg-[#bbf7d0] transition-all shadow-sm"
               >
                 Ver Todos
               </button>
@@ -173,50 +164,16 @@ function Home() {
           </div>
         </div>
 
-        {/* Sugestões Rápidas / Produtos filtrados dinamicamente */}
+        {/* Sugestões Rápidas / Produtos reais cadastrados */}
         <div className="flex flex-col gap-4">
           <h3 className="text-3xl font-bold text-spring-green-900">
             {categoriaSelecionada !== null ? "Produtos Filtrados" : "Sugestões Rápidas"}
           </h3>
           
           {produtosFiltrados.length === 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {[
-                { nome: "Salada", kcal: "300 kcal", imagem: salada },
-                { nome: "Smoothie", kcal: "200 kcal", imagem: smoothie },
-                { nome: "Wrap", kcal: "350 kcal", imagem: wrap2 },
-                { nome: "Omelete", kcal: "250 kcal", imagem: omelete },
-                { nome: "Sopa", kcal: "150 kcal", imagem: sopa },
-                { nome: "Frutas", kcal: "100 kcal", imagem: frutas },
-                { nome: "Poke", kcal: "400 kcal", imagem: poke },
-                { nome: "Peixe", kcal: "300 kcal", imagem: peixe },
-              ].map((item, index) => (
-                <NavLink
-                  to="/produto"
-                  key={index}
-                  className="bg-white rounded-xl overflow-hidden border border-[#bbf7d0] shadow-sm 
-                     hover:shadow-lg hover:-translate-y-1 
-                     transition-all duration-300 ease-in-out 
-                     transform hover:scale-105 
-                     flex flex-col cursor-pointer group"
-                >
-                  <div className="h-40 bg-[#f0fdf4] flex items-center justify-center overflow-hidden">
-                    <img
-                      src={item.imagem}
-                      alt={item.nome}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-3.5 flex flex-col items-center text-center">
-                    <span className="font-bold text-2xl text-[#042f17]">
-                      {item.nome}
-                    </span>
-                    <span className="text-sm text-[#0b8e44] font-semibold mt-0.5">
-                      {item.kcal}
-                    </span>
-                  </div>
-                </NavLink>
-              ))}
+            <div className="text-center py-16 bg-[#f0fdf4] rounded-2xl border border-[#bbf7d0] p-6">
+              <p className="text-base text-spring-green-800 font-bold">Nenhum produto cadastrado neste momento.</p>
+              <p className="text-xs text-spring-green-700 mt-1">Cadastre novos produtos para exibi-los aqui.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
