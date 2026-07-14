@@ -29,6 +29,9 @@ function FormProduto() {
   });
 
   // Busca todas as categorias para renderizar no select (corrigido para /categorias)
+  // Estado auxiliar para controlar o input de URL da imagem no front
+  const [urlFoto, setUrlFoto] = useState<string>("");
+
   async function buscarCategorias() {
     try {
       await buscar("/categoria", setCategorias);
@@ -40,7 +43,15 @@ function FormProduto() {
   // Busca o produto por ID caso seja uma edição (corrigido para /produto ou /produtos conforme sua API)
   async function buscarProdutoPorId(id: string) {
     try {
-      await buscar(`/produto/${id}`, setProduto);
+      const resposta = await buscar(`/produto/${id}`, (dados: Produto) => {
+        setProduto(dados);
+        // Se já houver imagem salva na descrição (separada por |), extrai para o input de foto
+        if (dados.descricao && dados.descricao.includes("|")) {
+          const partes = dados.descricao.split("|");
+          setProduto({ ...dados, descricao: partes[0].trim() });
+          setUrlFoto(partes[1]?.trim() || "");
+        }
+      });
     } catch (error: any) {
       ToastAlerta("Erro ao buscar o produto selecionado.", "erro");
     }
@@ -53,7 +64,6 @@ function FormProduto() {
     }
   }, [id]);
 
-  // Sincroniza o estado do select de categorias
   useEffect(() => {
     setProduto({
       ...produto,
@@ -76,9 +86,16 @@ function FormProduto() {
     e.preventDefault();
     setIsLoading(true);
 
+    // Une a descrição com a URL da foto usando "|" para salvar no campo descricao do back-end
+    const produtoParaSalvar = {
+      ...produto,
+      descricao: urlFoto.trim() ? `${produto.descricao} | ${urlFoto.trim()}` : produto.descricao,
+    };
+
     if (id !== undefined) {
       try {
         await atualizar(`/produto`, produto, setProduto);
+        await atualizar(`/produto`, produtoParaSalvar, setProduto);
         ToastAlerta("Produto atualizado com sucesso!", "sucesso");
         retornar();
       } catch (error: any) {
@@ -87,6 +104,7 @@ function FormProduto() {
     } else {
       try {
         await cadastrar(`/produto`, produto, setProduto);
+        await cadastrar(`/produto`, produtoParaSalvar, setProduto);
         ToastAlerta("Produto cadastrado com sucesso!", "sucesso");
         retornar();
       } catch (error: any) {
@@ -117,7 +135,7 @@ function FormProduto() {
           </label>
           <input
             type="text"
-            placeholder="Ex: Hambúrguer Artesanal, Suco Natural de Laranja"
+            placeholder="Ex: Hambúrguer Artesanal, Suco Natural"
             name="nome"
             required
             className="border border-[#bbf7d0] rounded-xl p-3 focus:outline-none focus:border-[#0b8e44] text-slate-800 bg-white"
@@ -137,6 +155,13 @@ function FormProduto() {
             className="border border-[#bbf7d0] rounded-xl p-3 focus:outline-none focus:border-[#0b8e44] text-slate-800 bg-white"
             value={produto.foto || ""}
             onChange={atualizarEstado}
+          <label htmlFor="foto" className="font-bold text-[#042f17] text-sm">Foto (Endereço URL do Google)</label>
+          <input
+            type="text"
+            placeholder="https://images.unsplash.com/... ou link de imagem"
+            value={urlFoto}
+            onChange={(e) => setUrlFoto(e.target.value)}
+            className="border border-[#bbf7d0] rounded-xl p-3 focus:outline-none focus:border-[#0b8e44] text-slate-800 bg-white"
           />
         </div>
 
@@ -184,7 +209,7 @@ function FormProduto() {
             Descrição
           </label>
           <textarea
-            placeholder="Descreva os ingredientes ou detalhes do produto..."
+            placeholder="Descreva os ingredientes..."
             name="descricao"
             required
             rows={3}

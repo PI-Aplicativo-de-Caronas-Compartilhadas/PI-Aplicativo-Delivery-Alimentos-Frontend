@@ -8,7 +8,7 @@ O **NutriGo** é um aplicativo de delivery focado em alimentos saudáveis. A pla
 
 - **React** (com TypeScript e TSX)
 - **Vite** (Ferramenta de build rápida)
-- **CSS3** (Estilização base e global)
+- **Tailwind Css** (Estilização base e global)
 - **ESLint** (Padronização e qualidade de código)
 
 ---
@@ -47,7 +47,7 @@ src/
 
 ## 👥 Desenvolvedores
 
-Projeto desenvolvido em equipe pelos integrantes (em ordem alfabética):
+Projeto desenvolvido em equipe pelos integrantes:
 
 - Fabriciana Lima
 - Fernando Garcia Cabeceiro
