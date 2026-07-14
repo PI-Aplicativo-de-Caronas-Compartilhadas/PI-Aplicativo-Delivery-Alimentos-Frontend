@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type Produto from "../../../models/Produto";
 import { buscar, deletar } from "../../../services/Service";
+import { ToastAlerta } from "../../../utils/ToastAlera";
 
 function DeletarProduto() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function DeletarProduto() {
     try {
       await buscar(`/produto/${id}`, setProduto);
     } catch (error: any) {
-      alert("Erro ao buscar o produto.");
+      ToastAlerta("Erro ao buscar o produto", "erro");
     }
   }
 
@@ -35,17 +36,17 @@ function DeletarProduto() {
     setIsLoading(true);
     try {
       await deletar(`/produto/${id}`);
-      alert("Produto removido com sucesso!");
+      ToastAlerta("Produto removido com sucesso!", "sucesso");
       retornar();
     } catch (error: any) {
-      alert("Erro ao tentar remover o produto.");
+      ToastAlerta("Erro ao tentar remover o produto.", "erro");
     } finally {
       setIsLoading(false);
     }
   }
 
   function retornar() {
-    navigate("/produtos");
+    navigate("/produto");
   }
 
   return (
@@ -62,7 +63,9 @@ function DeletarProduto() {
 
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-center">
           <p className="text-xl font-black text-[#042f17]">{produto.nome}</p>
-          <p className="text-sm text-gray-500 mt-1">{produto.categoria?.nome}</p>
+          <p className="text-sm text-gray-500 mt-1">
+            {produto.categoria?.nome}
+          </p>
         </div>
 
         <div className="flex items-center gap-3">
