@@ -47,7 +47,7 @@ src/
 
 ## 👥 Desenvolvedores
 
-Projeto desenvolvido em equipe pelos integrantes (em ordem alfabética):
+Projeto desenvolvido em equipe pelos integrantes:
 
 - Fabriciana Lima
 - Fernando Garcia Cabeceiro
