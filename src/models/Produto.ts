@@ -6,5 +6,6 @@ export default interface Produto {
   preco: number;
   calorias: number;
   descricao: string;
+  foto?: string; // Novo campo para a URL da imagem
   categoria: Categoria | null;
 }
