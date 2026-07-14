@@ -4,7 +4,6 @@ import type Produto from "../../../models/Produto";
 import { buscar } from "../../../services/Service";
 import CardProduto from "../cardproduto/CardProduto";
 import { ToastAlerta } from "../../../utils/ToastAlera";
-import { SyncLoader } from "react-spinners";
 import { PlusCircle, CircleNotch } from "@phosphor-icons/react";
 
 function ListaProdutos() {
@@ -25,31 +24,11 @@ function ListaProdutos() {
 
   useEffect(() => {
     buscarProdutos();
-  }, [produtos.length]);
+  }, []);
 
   return (
-    <>
-      {isLoading && (
-        <div className="flex justify-center w-full my-8">
-          <SyncLoader color="#0b8e44" size={32} />
-        </div>
-      )}
-
-      <div className="flex justify-center w-full my-4">
-        <div className="container flex flex-col px-4">
-          {!isLoading && produtos.length === 0 && (
-            <div className="text-center py-20 bg-[#f0fdf4] rounded-2xl border border-[#bbf7d0] p-8">
-              <p className="text-xl font-bold text-[#075f2d]">
-                Nenhum Produto Encontrado.
-              </p>
-              <p className="text-sm text-[#075f2d]/70 mt-1">
-                Cadastre um novo produto para começar.
-              </p>
-            </div>
-          )}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     <div className="w-full bg-white min-h-[calc(100vh-8rem)] text-[#042f17] py-10 px-8 flex flex-col items-center">
-      <div className="container max-w-6xl flex flex-col gap-8">
+      <div className="container max-w-6xl flex flex-col gap-8 w-full">
         
         {/* Cabeçalho da Lista de Produtos */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-[#bbf7d0] pb-6">
@@ -69,8 +48,8 @@ function ListaProdutos() {
 
         {/* Feedback Visual: Loading, Vazio ou Lista */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-             <CircleNotch size={48} weight="bold" className="text-[#0b8e44] animate-spin" />
+          <div className="flex justify-center items-center py-20 w-full">
+            <CircleNotch size={48} weight="bold" className="text-[#0b8e44] animate-spin" />
           </div>
         ) : produtos.length === 0 ? (
           <div className="text-center py-20 bg-[#f0fdf4] rounded-2xl border border-[#bbf7d0] p-8">
@@ -83,11 +62,10 @@ function ListaProdutos() {
               <CardProduto key={produto.id} produto={produto} />
             ))}
           </div>
-        </div>
         )}
 
       </div>
-    </>
+    </div>
   );
 }
 
