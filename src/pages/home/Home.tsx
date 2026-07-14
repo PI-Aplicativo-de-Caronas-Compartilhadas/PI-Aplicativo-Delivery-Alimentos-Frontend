@@ -18,22 +18,46 @@ import { ToastAlerta } from "../../utils/ToastAlera";
 function Home() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState<number | null>(null);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<
+    number | null
+  >(null);
+
+  const [recomendacoes, setRecomendacoes] = useState<Produto[]>([]);
+  const [isLoadingRecomendacao, setIsLoadingRecomendacao] =
+    useState<boolean>(false);
 
   async function buscarDados() {
     try {
       await buscar("/produto", setProdutos);
-      await buscar("/categoria", setCategorias); // Rota no singular conforme sua API
+      await buscar("/categoria", setCategorias);
     } catch (error: any) {
       ToastAlerta("Erro ao carregar os dados.", "erro");
     }
   }
 
+  async function obterRecomendacoes() {
+    try {
+      setIsLoadingRecomendacao(true);
+      await buscar("produto/recomendacoes", (dados: Produto[]) => {
+        if (Array.isArray(dados)) {
+          setRecomendacoes(dados);
+        } else {
+          setRecomendacoes([]);
+        }
+      });
+    } catch (error: any) {
+      console.error("Erro ao obter recomendações:", error);
+      setRecomendacoes([]);
+    } finally {
+      setIsLoadingRecomendacao(false);
+    }
+  }
+
   useEffect(() => {
     buscarDados();
+    obterRecomendacoes();
   }, []);
 
-  // Mapeamento fixo de ícones para as categorias
   const iconesCategorias: Record<string, any> = {
     Café: Coffee,
     Almoço: ForkKnife,
@@ -53,15 +77,16 @@ function Home() {
   const listaProdutos = Array.isArray(produtos) ? produtos : [];
   const listaCategorias = Array.isArray(categorias) ? categorias : [];
 
-  // Filtra os produtos com base na categoria selecionada
-  const produtosFiltrados = categoriaSelecionada !== null
-    ? listaProdutos.filter((item) => item.categoria?.id === categoriaSelecionada)
-    : listaProdutos;
+  const produtosFiltrados =
+    categoriaSelecionada !== null
+      ? listaProdutos.filter(
+          (item) => item.categoria?.id === categoriaSelecionada,
+        )
+      : listaProdutos;
 
   return (
     <div className="w-full bg-white text-spring-green-900 py-8 px-8 flex flex-col items-center">
       <div className="w-full max-w-screen-xl flex flex-col gap-12">
-        
         {/* Saudação Inicial + Clima Local */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex flex-col gap-1">
@@ -72,51 +97,115 @@ function Home() {
               Pronto para sua próxima refeição saudável?
             </p>
           </div>
-          
+
           <div className="self-start sm:self-center">
             <ClimaNavbar />
           </div>
         </div>
 
-        {/* Recomendação do Dia (Destaque Principal) */}
-        <div className="bg-[#f0fdf4] text-[#042f17] p-6 md:p-8 rounded-2xl border border-[#bbf7d0] shadow-md flex flex-col lg:flex-row items-center justify-between gap-6">
-          <div className="w-full lg:w-1/3 h-48 rounded-xl overflow-hidden bg-white border border-[#bbf7d0]">
-            <img
-              src="/bowl-salada.jpeg"
-              alt="Bowl de Quinoa com Abacate"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="flex-1 flex flex-col gap-3">
-            <span className="text-[10px] font-extrabold text-[#0b8e44] tracking-wider uppercase bg-[#dcfce7] py-1 px-2.5 rounded-md w-fit">
-              Recomendação do Dia
-            </span>
-            <h2 className="text-2xl md:text-3xl font-black text-[#042f17]">
-              Bowl de Quinoa com Abacate
-            </h2>
-
-            <div className="flex flex-wrap gap-3 text-xs font-bold text-[#075f2d] bg-[#dcfce7]/70 py-2 px-3.5 rounded-lg w-fit">
-              <span className="flex items-center gap-1">
-                <Fire size={15} weight="fill" className="text-[#f97316]" /> 450 kcal
+        {/* Recomendações do Dia (Destaque Principal Dinâmico com os produtos do Back) */}
+        <div className="bg-[#f0fdf4] text-[#042f17] p-6 md:p-8 rounded-2xl border border-[#bbf7d0] shadow-md flex flex-col gap-6 min-h-[240px]">
+          <div className="flex items-center justify-between border-b border-[#bbf7d0] pb-4">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-extrabold text-[#0b8e44] tracking-wider uppercase bg-[#dcfce7] py-1 px-2.5 rounded-md w-fit">
+                Especiais do Dia
               </span>
-              <span>|</span>
-              <span>35g Carb</span>
-              <span>|</span>
-              <span>20g Prot</span>
+              <h2 className="text-xl md:text-2xl font-black text-[#042f17]">
+                Nossas Recomendações Saudáveis
+              </h2>
             </div>
+            <button
+              onClick={obterRecomendacoes}
+              disabled={isLoadingRecomendacao}
+              className="text-[#0b8e44] hover:text-[#075f2d] font-bold text-xs flex items-center gap-1.5 transition-colors disabled:opacity-50"
+            >
+              <ArrowClockwise
+                size={18}
+                className={isLoadingRecomendacao ? "animate-spin" : ""}
+                weight="bold"
+              />
+              Trocar Sugestões
+            </button>
+          </div>
 
-            <div className="flex flex-wrap items-center gap-4 mt-2">
-              <NavLink
-                to="/produto"
-                className="bg-[#0b8e44] hover:bg-[#075f2d] text-white font-bold py-2.5 px-7 rounded-xl transition-all shadow-sm text-sm flex items-center gap-2"
+          {isLoadingRecomendacao ? (
+            <div className="flex-1 flex flex-col items-center justify-center py-8 gap-3 w-full">
+              <ArrowClockwise
+                size={32}
+                className="animate-spin text-[#0b8e44]"
+              />
+              <p className="text-sm font-semibold text-[#075f2d]">
+                Selecionando as melhores opções...
+              </p>
+            </div>
+          ) : recomendacoes.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+              {recomendacoes.map((rec) => (
+                <NavLink
+                  to="/produto"
+                  key={rec.id}
+                  className="group flex flex-col sm:flex-row gap-4 items-center bg-white p-5 rounded-xl border border-[#dcfce7] 
+                    hover:border-[#bbf7d0] hover:shadow-lg hover:-translate-y-1 
+                    transition-all duration-300 ease-in-out transform cursor-pointer"
+                >
+                  <div className="w-full sm:w-1/3 h-32 rounded-lg overflow-hidden bg-[#f0fdf4] border border-[#e2e8f0]">
+                    <img
+                      src={rec.foto || obterImagemProduto(rec.descricao)}
+                      alt={rec.nome}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col gap-2.5 w-full text-left">
+                    {/* Aumentado o tamanho da letra do título do produto recomendado */}
+                    <h3 className="text-xl md:text-2xl font-black text-[#042f17] line-clamp-1">
+                      {rec.nome}
+                    </h3>
+
+                    <div className="flex flex-wrap gap-2 text-[11px] font-bold text-[#075f2d] bg-[#dcfce7]/50 py-1 px-2.5 rounded w-fit">
+                      <span className="flex items-center gap-0.5">
+                        <Fire
+                          size={13}
+                          weight="fill"
+                          className="text-[#f97316]"
+                        />{" "}
+                        {rec.calorias || 0} kcal
+                      </span>
+                      <span>|</span>
+                      <span>R$ {(rec.preco || 0).toFixed(2)}</span>
+                    </div>
+
+                    {/* Descrição levemente maior e mais legível */}
+                    <p className="text-sm text-[#075f2d]/80 line-clamp-2 leading-relaxed">
+                      {rec.descricao
+                        ? rec.descricao.split("|")[0].trim()
+                        : "Sem descrição disponível."}
+                    </p>
+
+                    {/* Texto mais intuitivo para guiar o usuário ao cardápio geral */}
+                    <span className="text-[#0b8e44] group-hover:text-[#075f2d] font-bold text-xs flex items-center gap-1 mt-1 transition-all">
+                      Ver Cardápio Completo{" "}
+                      <ArrowRight size={14} weight="bold" />
+                    </span>
+                  </div>
+                </NavLink>
+              ))}
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center py-6 gap-3 w-full text-center">
+              <p className="text-sm font-bold text-[#075f2d]">
+                Nenhuma recomendação cadastrada no momento.
+              </p>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  obterRecomendacoes();
+                }}
+                className="bg-[#0b8e44] hover:bg-[#075f2d] text-white font-bold py-2 px-4 rounded-lg text-xs flex items-center gap-1.5 transition-all"
               >
-                Ver Detalhes <ArrowRight size={16} weight="bold" />
-              </NavLink>
-              <button className="text-[#0b8e44] hover:text-[#075f2d] font-bold text-xs flex items-center gap-1.5 transition-colors">
-                <ArrowClockwise size={20} weight="bold" /> Trocar Sugestão
+                <ArrowClockwise size={14} /> Carregar Sugestões
               </button>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Explore por Categorias Dinâmicas */}
@@ -126,7 +215,7 @@ function Home() {
               Explore por Categorias
             </h3>
             {categoriaSelecionada !== null && (
-              <button 
+              <button
                 onClick={() => setCategoriaSelecionada(null)}
                 className="text-xs font-bold text-[#0b8e44] bg-[#dcfce7] border border-[#0b8e44] py-1.5 px-3.5 rounded-lg hover:bg-[#bbf7d0] transition-all shadow-sm"
               >
@@ -145,7 +234,9 @@ function Home() {
                   key={cat.id}
                   onClick={() => setCategoriaSelecionada(cat.id)}
                   className={`group bg-white p-5 rounded-2xl border shadow-sm flex flex-col items-center gap-3 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
-                    estaSelecionado ? 'border-[#0b8e44] bg-[#dcfce7] scale-105' : 'border-[#bbf7d0] hover:border-[#4ade80]'
+                    estaSelecionado
+                      ? "border-[#0b8e44] bg-[#dcfce7] scale-105"
+                      : "border-[#bbf7d0] hover:border-[#4ade80]"
                   }`}
                 >
                   <div className="w-14 h-14 rounded-full bg-[#dcfce7] flex items-center justify-center">
@@ -167,13 +258,19 @@ function Home() {
         {/* Sugestões Rápidas / Produtos reais cadastrados */}
         <div className="flex flex-col gap-4">
           <h3 className="text-3xl font-bold text-spring-green-900">
-            {categoriaSelecionada !== null ? "Produtos Filtrados" : "Sugestões Rápidas"}
+            {categoriaSelecionada !== null
+              ? "Produtos Filtrados"
+              : "Sugestões Rápidas"}
           </h3>
-          
+
           {produtosFiltrados.length === 0 ? (
             <div className="text-center py-16 bg-[#f0fdf4] rounded-2xl border border-[#bbf7d0] p-6">
-              <p className="text-base text-spring-green-800 font-bold">Nenhum produto cadastrado neste momento.</p>
-              <p className="text-xs text-spring-green-700 mt-1">Cadastre novos produtos para exibi-los aqui.</p>
+              <p className="text-base text-spring-green-800 font-bold">
+                Nenhum produto cadastrado neste momento.
+              </p>
+              <p className="text-xs text-spring-green-700 mt-1">
+                Cadastre novos produtos para exibi-los aqui.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -214,7 +311,6 @@ function Home() {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
