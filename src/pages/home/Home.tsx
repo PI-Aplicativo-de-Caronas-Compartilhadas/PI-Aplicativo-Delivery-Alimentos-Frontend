@@ -1,19 +1,27 @@
 import { NavLink } from "react-router-dom";
 import { Fire, ArrowRight, ArrowClockwise, Coffee, BowlFood, CookingPot, AppleLogo } from "@phosphor-icons/react";
+import ClimaNavbar from "../../components/navbar/ClimaNavbar";
 
 function Home() {
     return (
         <div className="w-full bg-white text-[#042f17] py-8 px-8 flex flex-col items-center">
             <div className="w-full max-w-6xl flex flex-col gap-8">
                 
-                {/* Saudação Inicial sem nome */}
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-3xl md:text-4xl font-black text-[#042f17]">
-                        Olá!
-                    </h1>
-                    <p className="text-sm md:text-base text-[#075f2d] font-medium">
-                        Pronto para sua próxima refeição saudável?
-                    </p>
+                {/* Saudação Inicial + Clima Local (Distribuição Flex) */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex flex-col gap-1">
+                        <h1 className="text-3xl md:text-4xl font-black text-[#042f17]">
+                            Olá!
+                        </h1>
+                        <p className="text-sm md:text-base text-[#075f2d] font-medium">
+                            Pronto para sua próxima refeição saudável?
+                        </p>
+                    </div>
+                    
+                    {/* Exibe o Clima alinhado ao lado direito */}
+                    <div className="self-start sm:self-center">
+                        <ClimaNavbar />
+                    </div>
                 </div>
 
                 {/* Recomendação do Dia (Destaque Principal) */}
